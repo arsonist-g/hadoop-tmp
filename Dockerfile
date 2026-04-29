@@ -121,25 +121,14 @@ service ssh start
 # 添加 known_hosts
 ssh-keyscan -H localhost hadoop-master 0.0.0.0 172.19.0.2 >> /root/.ssh/known_hosts 2>/dev/null
 
-echo "=== Starting Hadoop ==="
-start-dfs.sh
-start-yarn.sh
-
-echo "Waiting for NameNode to be ready..."
-sleep 8
-
-echo "=== Checking HDFS ==="
-hdfs dfsadmin -safemode get
-hdfs dfs -ls / || true
-
-echo "=== Starting HBase ==="
-start-hbase.sh
-
-echo "=== All services started ==="
-jps
+# 检查并格式化 NameNode（仅在首次启动时）
+if [ ! -d "/tmp/hadoop-root/dfs/name/current" ]; then
+    echo "=== Formatting NameNode (first time) ==="
+    hdfs namenode -format -force -nonInteractive
+fi
 
 # 保持容器运行并实时查看日志（教学方便）
-tail -f /opt/hbase/logs/hbase-root-master-*.log /opt/hadoop/logs/hadoop-root-namenode-*.log
+tail -f /dev/null
 EOF
 
 RUN chmod +x /root/start-hadoop.sh
