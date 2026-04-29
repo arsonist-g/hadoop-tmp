@@ -98,18 +98,6 @@ if [ ! -d "/tmp/hadoop-root/dfs/name/current" ]; then
     $HADOOP_HOME/bin/hdfs namenode -format -force
 fi
 
-# 启动 Hadoop 服务
-echo "Starting Hadoop services..."
-$HADOOP_HOME/sbin/start-all.sh
-
-# 等待 HDFS 完全启动
-echo "Waiting for HDFS to be ready..."
-sleep 10
-
-# 启动 HBase
-echo "Starting HBase..."
-$HBASE_HOME/bin/start-hbase.sh
-
 # 保持容器运行
 tail -f /dev/null
 EOF
